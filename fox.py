@@ -2,7 +2,7 @@ import discord
 import json
 from os import system
 import asyncio
-from datetime import datetime
+import datetime
 from discord.ext import commands
 
 def store(file, key=None, read=False, val=None):
@@ -23,7 +23,7 @@ client.remove_command('help')
 
 @client.event
 async def on_ready():
-	await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='./help | Stable v1.0'))
+	await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='./help | Stable v0.2'))
 	print(f"Ready")
 
 @client.event
@@ -37,23 +37,13 @@ async def on_command_error(ctx, error):
 
 @client.command()
 async def help(ctx, comma=None):
-	e = discord.Embed(title="HELP", color=discord.Color.dark_blue())
-	e.add_field(name='User Commands:', value='./report\n./suggest\n./clearme\n./status')
-	e.add_field(name='More Help:', value='`./help <command>`')
-	e.add_field(name='Coming Soon:', value='None')
-	if comma is not None:
-		if comma == "report":
-			await ctx.send("Use `./report @member reason` to report a user to the admins.")
-		elif comma == "suggest":
-			await ctx.send("Use `./suggest idea` to suggest an idea to the admins.")
-		elif comma == "clearme":
-			await ctx.send("Use `./clearme` to clear all of your messages in the channel.")
-		elif comma == "status":
-			await ctx.send("Use `./status` to see the bot status of the bot.")
-		else:
-			await ctx.send(embed=e)
-	else:
-		await ctx.send(embed=e)
+	x = store('config.json', 'help', read=True)
+	e = discord.Embed(title='Help for NotFox', description="**<>** Fields are optional. **{}** Fields are manditory.", color=discord.Color.blurple(), timestamp=datetime.datetime.utcnow())
+	nu = 0
+	for help in x:
+		nu += 1
+		e.add_field(name=x[str(nu)]["com"], value=x[str(nu)]["desc"], inline=False)
+	await ctx.send(embed=e)
 
 @client.command()
 @commands.has_permissions(manage_roles=True)
